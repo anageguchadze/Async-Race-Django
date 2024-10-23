@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'race_app/style.css' %}">
+    <title>Winners</title> <!-- Change title as needed for winners.html -->
+</head>
+<body>
+    <section>
+        <div class="background">
+            <img src="https://media.istockphoto.com/id/1210045819/vector/blue-glitter-geometric-abstract-circular-gradient-background.jpg?s=612x612&w=0&k=20&c=bceTf80ZCiF2f07cRa7NYv_XfSwRQIgSQgFl2u99PTw=" alt="">
+            <div class="cover">
+                <div class="navbar">
+                    <a href="{% url 'garage' %}"><button>GARAGE</button></a>
+                    <a href="{% url 'winners' %}"><button>WINNERS</button></a>
+                </div>
+                <div class="title">
+                    <h1>Async</h1>
+                    <h1>Race</h1>
+                </div>
+                <div class="top">
+                    <div class="race">
+                        <button onclick="startRace()">Race</button>
+                        <button onclick="resetCars()">Reset</button>
+                    </div>
+                    <div class="create">
+                        <input class="txt" type="text" id="newBrandName" placeholder="Type Brand Name">
+                        <input class="color" type="color" id="newBrandColor">
+                        <button onclick="createCar()">Create Car</button>
+                    </div>
+                    <div class="update">
+                        <input class="txt" type="text" id="updatedBrandName" placeholder="Type Brand Name">
+                        <input class="color" type="color" id="updatedBrandColor">
+                        <button onclick="updateCar()">Update</button>
+                    </div>
+                    <div class="brand">
+                        <button onclick="generateBrands()">Generate Brands</button>
+                    </div>
+                </div>
+                <div class="card-container" id="cardContainer">
+                    <!-- Car cards will be generated here via JavaScript -->
+                </div>
+                <div class="pagination">
+                    <button onclick="prevPage()">Previous</button>
+                    <span>Page <span id="currentPage">1</span></span>
+                    <button onclick="nextPage()">Next</button>
+                </div>
+                <div id="winnerDiv" class="winner-div" style="display: none;">
+                    <h2>WINNER:</h2>
+                    <h3 id="winnerName"></h3>
+                    <p id="winnerTime"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

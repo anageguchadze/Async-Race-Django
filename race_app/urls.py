@@ -1,6 +1,12 @@
-from django.urls import path
-from .views import CarListView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import CarViewSet, garage , winners
+
+router = DefaultRouter()
+router.register(r'cars', CarViewSet)
 
 urlpatterns = [
-    path('cars/', CarListView.as_view(), name='car-list'),
+    path('', include(router.urls)),
+    path('garage/', garage, name='garage'),  # HTML view for garage
+    path('winners/', winners, name='winners'),
 ]

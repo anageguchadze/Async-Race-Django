@@ -1,0 +1,163 @@
+/* static/styles.css */
+
+.background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.background {
+    position: relative;
+    width: 100%;
+    height: 900px;
+    text-align: center;
+}
+
+.cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-left: 5%;
+    margin-top: 1%;
+}
+
+.navbar button {
+    background-color: rgba(239, 219, 251, 0.678);
+    border: none;
+    color: rgb(158, 103, 190);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.5s;
+}
+
+.navbar button:hover {
+    background-color: rgba(233, 179, 244, 0.917);
+}
+
+.title {
+    display: flex;
+    align-items: end;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 8%;
+    margin-top: -8%;
+}
+
+.title h1 {
+    font-size: 70px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgba(248, 120, 208, 0.939);
+}
+
+.top {
+    display: flex;
+    width: 90%;
+    justify-content: space-between;
+    margin-left: 5%;
+}
+
+.race button,
+.create button,
+.update button,
+.brand button {
+    border: none;
+    background-color: rgba(197, 244, 164, 0.956);
+    color: rgb(59, 155, 77);
+    transition: background-color 0.5s;
+}
+
+.race button:hover,
+.create button:hover,
+.update button:hover,
+.brand button:hover {
+    background-color: rgba(90, 224, 12, 0.864);
+}
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+    height: 650px;
+}
+
+.card {
+    width: 90%;
+    height: 70px;
+    padding: 10px;
+    border: 1px solid #0c0c0ca7;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #5e6f795e;
+    display: flex;
+    align-items: start;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 60px;
+    margin-top: 20px;
+    color: rgba(0, 0, 0, 0.596);
+}
+
+.pagination {
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 5%;
+    margin-top: -60px;
+}
+
+.pagination button {
+    background-color: rgba(252, 252, 164, 0.929);
+    border: none;
+    color: rgb(204, 182, 16);
+    transition: background-color 0.5s;
+}
+
+.pagination button:hover {
+    background-color: rgba(252, 252, 31, 0.99);
+}
+
+.winner-div {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(248, 120, 208, 0.409);
+    padding: 20px;
+    border-radius: 15px;
+    color: rgba(243, 19, 172, 0.774);
+    width: 200px;
+}
+
+/* Media Queries */
+@media screen and (max-width: 500px) {
+    .background {
+        height: 750px;
+    }
+    .title h1 {
+        font-size: 40px;
+    }
+    .top {
+        flex-direction: column;
+        align-items: center;
+    }
+    .card {
+        width: 95%;
+        height: 50px;
+    }
+    .pagination {
+        margin-top: 20px; /* Completed this line */
+    }
+}

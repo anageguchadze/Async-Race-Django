@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'race_app/style.css' %}">
+    <title>Garage</title>
+</head>
+<body>
+    <section>
+        <div class="background">
+            <img src="https://media.istockphoto.com/id/1210045819/vector/blue-glitter-geometric-abstract-circular-gradient-background.jpg?s=612x612&w=0&k=20&c=bceTf80ZCiF2f07cRa7NYv_XfSwRQIgSQgFl2u99PTw=" alt="Background Image">
+            <div class="cover">
+                <div class="navbar">
+                    <a href="{% url 'garage' %}"><button>GARAGE</button></a>
+                    <a href="{% url 'winners' %}"><button>WINNERS</button></a>
+                </div>
+                <div class="title">
+                    <h1>Async</h1>
+                    <h1>Race</h1>
+                </div>
+                <div class="top">
+                    <div class="race">
+                        <button onclick="startRace()">Race</button>
+                        <button onclick="resetCars()">Reset</button>
+                    </div>
+                    <div class="create">
+                        <input class="txt" type="text" id="newBrandName" placeholder="Type Brand Name" required>
+                        <input class="color" type="color" id="newBrandColor" required>
+                        <button onclick="createCar()">Create Car</button>
+                    </div>
+                    <div class="update">
+                        <input class="txt" type="text" id="updatedBrandName" placeholder="Type Brand Name">
+                        <input class="color" type="color" id="updatedBrandColor">
+                        <button onclick="updateCar()">Update</button>
+                    </div>
+                    <div class="brand">
+                        <button onclick="generateBrands()">Generate Brands</button>
+                    </div>
+                </div>
+                <div class="card-container" id="cardContainer">
+                    <h2>Car List</h2>
+                    <div id="car-list"></div>
+                    <div class="pagination">
+                        <button onclick="prevPage()">Previous</button>
+                        <span>Page <span id="currentPage">1</span></span>
+                        <button onclick="nextPage()">Next</button>
+                    </div>
+                </div>
+                <div id="winnerDiv" class="winner-div" style="display: none;">
+                    <h2>WINNER:</h2>
+                    <h3 id="winnerName"></h3>
+                    <p id="winnerTime"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let currentPage = 1; // Current page for pagination
+        const carsPerPage = 7; // Number of cars per page
+        let allCars = []; // Store all cars
+        let selectedCarId = null; // Store selected car ID for updating
+
+        // Fetch cars from the API
+        function fetchCars(page) {
+            fetch(`/api/cars/?page=${page}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    allCars = data.results; // Store fetched cars
+                    renderCars(); // Render cars in the UI
+                    document.getElementById('currentPage').innerText = page; // Update current page display
+                })
+                .catch(error => console.error('Error fetching car data:', error));
+        }
+
+        // Render the fetched cars in the UI
+        function renderCars() {
+            const carList = document.getElementById('car-list');
+            carList.innerHTML = ''; // Clear previous content
+
+            allCars.forEach(car => {
+                const carItem = document.createElement('div');
+                carItem.classList.add('card');
+                carItem.style.backgroundColor = car.color; // Use the color from the car object
+
+                carItem.innerHTML = `
+                    <div class="car-info">
+                        <span>${car.brand}</span>
+                        <input type="radio" name="selectedCar" value="${car.id}" ${selectedCarId === car.id ? 'checked' : ''} />
+                        <button onclick="selectCar('${car.id}')">Select</button>
+                        <button onclick="removeCar('${car.id}')">Remove</button>
+                    </div>
+                `;
+                carList.appendChild(carItem);
+            });
+        }
+
+        // Start the race
+        function startRace() {
+            console.log("Race started!");
+            // Implement race logic here (moving cars)
+            // For example, animate car positions
+            const raceDuration = 3000; // Race duration in milliseconds
+
+            allCars.forEach((car, index) => {
+                const carElement = document.querySelector(`input[value="${car.id}"]`).parentNode; // Get the car's DOM element
+                const carItem = carElement.closest('.card'); // Get the card element
+
+                carItem.style.transition = `transform ${raceDuration}ms linear`;
+                carItem.style.transform = `translateX(100vw)`; // Move car to the right
+
+                // Simulate the winner by determining which car finishes first
+                setTimeout(() => {
+                    if (index === 0) { // Assuming first car in list is the winner
+                        announceWinner(car.brand, raceDuration);
+                    }
+                }, raceDuration);
+            });
+        }
+
+        function announceWinner(brand, duration) {
+            document.getElementById('winnerName').innerText = brand;
+            document.getElementById('winnerTime').innerText = `${duration / 1000} seconds`;
+            document.getElementById('winnerDiv').style.display = 'block';
+        }
+
+        // Reset the cars to starting position
+        function resetCars() {
+            console.log("Race reset!");
+            const carItems = document.querySelectorAll('.card');
+            carItems.forEach(carItem => {
+                carItem.style.transition = 'none'; // Remove transition
+                carItem.style.transform = 'translateX(0)'; // Move cars back to the start
+            });
+            document.getElementById('winnerDiv').style.display = 'none'; // Hide winner
+        }
+
+        // Create a new car
+        function createCar() {
+            const brandName = document.getElementById('newBrandName').value;
+            const color = document.getElementById('newBrandColor').value;
+
+            fetch('/api/cars/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ brand: brandName, color: color })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Car created:", data);
+                fetchCars(currentPage); // Refresh the car list
+                document.getElementById('newBrandName').value = ''; // Clear input
+            })
+            .catch(error => console.error('Error creating car:', error));
+        }
+
+        // Update an existing car
+        function updateCar() {
+            const brandName = document.getElementById('updatedBrandName').value;
+            const color = document.getElementById('updatedBrandColor').value;
+
+            const carId = document.querySelector('input[name="selectedCar"]:checked')?.value; // Get selected car ID
+
+            if (!carId) {
+                alert('Please select a car to update.');
+                return;
+            }
+
+            fetch(`/api/cars/${carId}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ brand: brandName, color: color })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Car updated:", data);
+                fetchCars(currentPage); // Refresh the car list
+                document.getElementById('updatedBrandName').value = ''; // Clear input
+                document.getElementById('updatedBrandColor').value = ''; // Clear color input
+                selectedCarId = null; // Reset selected car
+            })
+            .catch(error => console.error('Error updating car:', error));
+        }
+
+        // Remove a car
+        function removeCar(carId) {
+            if (confirm('Are you sure you want to remove this car?')) {
+                fetch(`/api/cars/${carId}/`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log(`Car ${carId} removed.`);
+                        fetchCars(currentPage); // Refresh the car list
+                    } else {
+                        console.error('Error removing car:', response.statusText);
+                    }
+                })
+                .catch(error => console.error('Error removing car:', error));
+            }
+        }
+
+        // Generate random cars
+        function generateBrands() {
+            fetch('/api/cars/random') // Assuming you have an endpoint for random cars
+                .then(response => response.json())
+                .then(data => {
+                    allCars = data.results;
+                    renderCars(); // Render the new random cars
+                })
+                .catch(error => console.error('Error generating brands:', error));
+        }
+
+        // Pagination functions
+        function nextPage() {
+            currentPage++;
+            fetchCars(currentPage);
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchCars(currentPage);
+            }
+        }
+
+        // Initial fetch of cars when the page loads
+        fetchCars(currentPage);
+    </script>
+</body>
+</html>
